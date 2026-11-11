@@ -17,12 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip openjdk-17-jdk \
-            python3-pip python3-venv \
-            autoconf libtool pkg-config \
-            zlib1g-dev libncurses5-dev \
-            libffi-dev libssl-dev
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libffi-dev libssl-dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,13 +29,18 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython==0.29.36
 
-      - name: Build APK
+      - name: Accept Android SDK licenses
         run: |
-          buildozer android debug
+          mkdir -p "$HOME/.buildozer/android/platform"
+          yes | buildozer android update || true
+          yes | buildozer android debug || true
+
+      - name: Build APK
+        run: buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NX-AIM-PRO-APK
           path: bin/*.apk
-
+          
