@@ -24,18 +24,16 @@ jobs:
         with:
           python-version: '3.11'
 
+      
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install buildozer cython==0.29.36
 
-      - name: Accept Android SDK licenses
-        run: |
-          mkdir -p "$HOME/.buildozer/android/platform"
-          yes | buildozer android update || true
-          yes | buildozer android debug || true
-
       - name: Build APK
+        run: |
+          buildozer android debug
+        
         run: buildozer android debug
 
       - name: Upload APK
